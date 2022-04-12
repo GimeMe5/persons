@@ -11,17 +11,17 @@ import java.util.Optional;
  * @author Artyom Kulagin
  */
 public class GoodDao implements Dao<Good, Integer> {
-    public GoodDao() {
+    private GoodDao() {
     }
 
-//    private static GoodDao instance;
-//
-//    public static GoodDao getInstance() {
-//        if (instance == null) {
-//            instance = new GoodDao();
-//        }
-//        return instance;
-//    }
+    private static GoodDao instance;
+
+    public static GoodDao getInstance() {
+        if (instance == null) {
+            instance = new GoodDao();
+        }
+        return instance;
+    }
 
     @Override
     public Optional<Good> find(Integer id) throws SQLException {

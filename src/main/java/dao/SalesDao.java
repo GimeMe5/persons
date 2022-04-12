@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * @author Artyom Kulagin
  */
-public class SalesDao implements Dao<Sale,Integer> {
+public class SalesDao implements Dao<Sale, Integer> {
     private SalesDao() {
     }
 
@@ -37,14 +37,13 @@ public class SalesDao implements Dao<Sale,Integer> {
             count = resultSet.getInt("count");
             goodId = resultSet.getInt("good_id");
         }
-        return Optional.of(new Sale(id, count,goodId));
+        return Optional.of(new Sale(id, count, goodId));
     }
 
     @Override
     public List<Sale> findAll() throws SQLException {
         List<Sale> sales = new ArrayList<>();
         String sql = "SELECT * FROM sales";
-
 
         Connection connection = DataSource.getConnection();
         Statement statement = connection.createStatement();
@@ -83,7 +82,7 @@ public class SalesDao implements Dao<Sale,Integer> {
         connection.commit();
         connection.setAutoCommit(true);
 
-        return first&second;
+        return first & second;
     }
 
     @Override

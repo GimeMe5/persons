@@ -11,7 +11,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,8 +21,13 @@ import java.util.Optional;
  */
 @WebServlet("/")
 public class CRUDServlet extends HttpServlet {
-    private final GoodDao goodDao = new GoodDao();
-    private final SalesDao salesDao = SalesDao.getInstance();
+    private GoodDao goodDao;
+    private SalesDao salesDao;
+
+    public void init() {
+        goodDao = GoodDao.getInstance();
+        salesDao = SalesDao.getInstance();
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -75,7 +79,7 @@ public class CRUDServlet extends HttpServlet {
                     showNewFormSale(req, resp);
                     break;
                 case "/listsale":
-                    listSales(req,resp);
+                    listSales(req, resp);
                 default:
                     listGood(req, resp);
                     break;
@@ -122,7 +126,7 @@ public class CRUDServlet extends HttpServlet {
 
     private void showNewFormGood(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("views/jsp/goods/addgoodform.jsp");
-        dispatcher.forward(req,resp);
+        dispatcher.forward(req, resp);
     }
 
     private void listGood(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
@@ -163,7 +167,7 @@ public class CRUDServlet extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         int count = Integer.parseInt(req.getParameter("count"));
         int goodId = Integer.parseInt(req.getParameter("goodId"));
-        Sale sale = new Sale(id,count,goodId);
+        Sale sale = new Sale(id, count, goodId);
         salesDao.save(sale);
         resp.sendRedirect("/listsale");
     }
