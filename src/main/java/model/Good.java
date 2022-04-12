@@ -28,6 +28,4 @@ public class Good {
         this.name = name;
         this.price = price;
     }
-
-
 }

@@ -3,5 +3,5 @@
 <jsp:setProperty property="*" name="g"/>
 <%
     GoodDao.getInstance().delete(g);
-    response.sendRedirect("viewgoods.jsp");
+    response.sendRedirect("/list");
 %>

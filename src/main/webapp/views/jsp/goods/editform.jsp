@@ -15,7 +15,7 @@
 %>
 
 <h1>Edit Form</h1>
-<form action="editgood.jsp" method="post">
+<form action="/updategood" method="post">
     <input type="hidden" name="id" value="<%=g.getId() %>"/>
     <table>
         <tr><td>Name:</td><td>

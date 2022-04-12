@@ -3,5 +3,5 @@
 <jsp:setProperty property="*" name="g"/>
 <%
     boolean i=GoodDao.getInstance().update(g);
-    response.sendRedirect("viewgoods.jsp");
+    response.sendRedirect("/list");
 %>

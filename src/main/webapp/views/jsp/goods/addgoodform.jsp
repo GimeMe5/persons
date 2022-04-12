@@ -9,14 +9,14 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Add User Form</title>
+    <title>Add Good Form</title>
 </head>
 <body>
 
-<a href="viewgoods.jsp">View All Goods</a><br/>
+<a href="/list">View All Goods</a><br/>
 
 <h1>Add New Good</h1>
-<form action="/insert" method="post">
+<form action="/insertgood" method="post">
     <table>
         <tr>
             <td>Name:</td>

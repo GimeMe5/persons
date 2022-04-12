@@ -11,22 +11,22 @@ import java.util.Optional;
  * @author Artyom Kulagin
  */
 public class GoodDao implements Dao<Good, Integer> {
-    private GoodDao() {
+    public GoodDao() {
     }
 
-    private static GoodDao instance;
-
-    public static GoodDao getInstance() {
-        if (instance == null) {
-            instance = new GoodDao();
-        }
-        return instance;
-    }
+//    private static GoodDao instance;
+//
+//    public static GoodDao getInstance() {
+//        if (instance == null) {
+//            instance = new GoodDao();
+//        }
+//        return instance;
+//    }
 
     @Override
     public Optional<Good> find(Integer id) throws SQLException {
         String sql = "SELECT * FROM goods WHERE id = ?";
-        int goodId = 0, price = 0;
+        int price = 0;
         String name = "";
         Connection connection = DataSource.getConnection();
 
@@ -71,7 +71,7 @@ public class GoodDao implements Dao<Good, Integer> {
         statement.setString(1, o.getName());
         statement.setInt(2, o.getPrice());
 
-        return statement.executeUpdate()>0;
+        return statement.executeUpdate() > 0;
     }
 
     @Override
@@ -84,16 +84,26 @@ public class GoodDao implements Dao<Good, Integer> {
         statement.setInt(2, o.getPrice());
         statement.setInt(3, o.getId());
 
-        return statement.executeUpdate()>0;
+        return statement.executeUpdate() > 0;
     }
 
     @Override
     public boolean delete(Good o) throws SQLException {
-        String sql = "DELETE FROM goods WHERE id = ?";
+        String deleteFromGoods = "DELETE FROM goods WHERE id = ?";
+        String deleteFromGoodsSales = "DELETE FROM goods_sales WHERE goods_id = ? ";
         Connection connection = DataSource.getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, o.getId());
+        PreparedStatement goodsStatement = connection.prepareStatement(deleteFromGoods);
+        PreparedStatement goodsSalesStatement = connection.prepareStatement(deleteFromGoodsSales);
 
-        return statement.executeUpdate()>0;
+        connection.setAutoCommit(false);
+        connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        goodsStatement.setInt(1, o.getId());
+        goodsSalesStatement.setInt(1, o.getId());
+        boolean first = goodsSalesStatement.executeUpdate() > 0;
+        boolean second = goodsStatement.executeUpdate() > 0;
+        connection.commit();
+        connection.setAutoCommit(true);
+
+        return first & second;
     }
 }

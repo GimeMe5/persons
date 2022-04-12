@@ -14,9 +14,15 @@ public class DataSource {
     private static HikariDataSource dataSource;
 
     static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         config.setJdbcUrl( "jdbc:postgresql://localhost:5432/goods" );
         config.setUsername( "mex" );
         config.setPassword( "qazlweydernbn" );
+        config.setConnectionTimeout(600000000);
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
