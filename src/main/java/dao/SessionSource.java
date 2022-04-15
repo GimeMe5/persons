@@ -1,6 +1,7 @@
 package dao;
 
-import org.hibernate.HibernateException;
+import model.Good;
+import model.Sale;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -18,7 +19,11 @@ public class SessionSource {
     public static SessionFactory buildSessionFactory() {
 
         if (sessionFactory==null) {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+            sessionFactory = new Configuration()
+                    .configure()
+                    .addAnnotatedClass(Good.class)
+                    .addAnnotatedClass(Sale.class)
+                    .buildSessionFactory();
         }
         return sessionFactory;
     }

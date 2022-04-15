@@ -22,15 +22,14 @@ public class SalesDao implements Dao<Sale, Integer> {
     public void save(Sale sale) {
         session = buildSessionFactory().openSession();
         session.save(sale);
-        logger.info("Good " + sale.getId() + " successfully created");
+        logger.info("Sale " + sale.getId() + " successfully created");
         session.close();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Sale> findAll() {
         session = buildSessionFactory().openSession();
-        List<Sale> sales = session.createQuery("SELECT * FROM sales").list();
+        List<Sale> sales = session.createQuery("FROM Sale",Sale.class).getResultList();
         session.close();
 
         return sales;
@@ -58,7 +57,7 @@ public class SalesDao implements Dao<Sale, Integer> {
         try {
             session = buildSessionFactory().openSession();
             session.beginTransaction();
-            Sale loadedSale = (Sale) session.get(Sale.class, sale.getId());
+            Sale loadedSale = session.get(Sale.class, sale.getId());
             loadedSale.setCount(sale.getCount());
             loadedSale.setGoodId(sale.getGoodId());
             session.getTransaction().commit();
