@@ -14,19 +14,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Artyom Kulagin
  */
 @WebServlet("/")
 public class CRUDServlet extends HttpServlet {
-    private GoodDao goodDao;
+//    private GoodDao goodDao;
     private SalesDao salesDao;
+    private GoodDao goodDao;
 
     public void init() {
-        goodDao = GoodDao.getInstance();
-        salesDao = SalesDao.getInstance();
+        goodDao = new GoodDao();
+        salesDao = new SalesDao();
     }
 
     @Override
@@ -99,19 +99,18 @@ public class CRUDServlet extends HttpServlet {
         resp.sendRedirect("list");
     }
 
-    private void showEditFormGood(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
+    private void showEditFormGood(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
-        Optional<Good> exitingGood = goodDao.find(id);
+        Good exitingGood = goodDao.findById(id);
         RequestDispatcher dispatcher = req.getRequestDispatcher("views/jsp/goods/editform.jsp");
-        exitingGood.ifPresent(s -> req.setAttribute("good", s));
+        req.setAttribute("good",exitingGood);
         dispatcher.forward(req, resp);
     }
 
     private void deleteGood(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
 
-        Good good = new Good(id);
-        goodDao.delete(good);
+        goodDao.delete(id);
         resp.sendRedirect("list");
     }
 
@@ -149,17 +148,16 @@ public class CRUDServlet extends HttpServlet {
 
     private void showEditFormSale(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
-        Optional<Sale> exitingGood = salesDao.find(id);
+        Sale exitingSale = salesDao.findById(id);
         RequestDispatcher dispatcher = req.getRequestDispatcher("views/jsp/sales/editform.jsp");
-        exitingGood.ifPresent(s -> req.setAttribute("sale", s));
+        req.setAttribute("sale",exitingSale);
         dispatcher.forward(req, resp);
     }
 
     private void deleteSale(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
 
-        Sale sale = new Sale(id);
-        salesDao.delete(sale);
+        salesDao.delete(id);
         resp.sendRedirect("/listsale");
     }
 

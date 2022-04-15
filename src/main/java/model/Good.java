@@ -2,11 +2,18 @@ package model;
 
 import lombok.Data;
 
+import javax.persistence.*;
+
+
 /**
  * @author Artyom Kulagin
  */
 @Data
+@Entity
+@Table(name = "goods")
 public class Good {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private int price;

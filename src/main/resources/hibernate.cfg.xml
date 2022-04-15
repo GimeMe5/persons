@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database Connection Settings -->
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/goods</property>
+        <property name="connection.username">mex</property>
+        <property name="connection.password">qazlweydernbn</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
+        <property name="show_sql">true</property>
+
+        <!-- Specifying Session Context -->
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <!-- Mapping With Model Class Containing Annotations -->
+        <mapping class="model.Good" />
+        <mapping class="model.Sale" />
+    </session-factory>
+</hibernate-configuration>

@@ -2,7 +2,6 @@ package controller;
 
 import dao.GoodDao;
 import dao.SalesDao;
-
 import model.Good;
 import model.Sale;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,13 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.lang.reflect.Field;
 
 /**
  * @author Artyom Kulagin
@@ -63,7 +58,7 @@ public class CRUDServletTest extends Mockito {
         when(request.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doPost(request,response);
-        verify(goodDao).find(1);
+        verify(goodDao).findById(1);
         verify(dispatcher).forward(request,response);
     }
 
@@ -73,7 +68,7 @@ public class CRUDServletTest extends Mockito {
         when(request.getParameter("id")).thenReturn("1");
 
         servlet.doPost(request, response);
-        verify(goodDao).delete(any(Good.class));
+        verify(goodDao).delete(anyInt());
     }
 
     @Test
@@ -113,7 +108,7 @@ public class CRUDServletTest extends Mockito {
         when(request.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doPost(request,response);
-        verify(salesDao).find(1);
+        verify(salesDao).findById(1);
         verify(dispatcher).forward(request,response);
     }
 
@@ -123,7 +118,7 @@ public class CRUDServletTest extends Mockito {
         when(request.getParameter("id")).thenReturn("1");
 
         servlet.doPost(request, response);
-        verify(salesDao).delete(any(Sale.class));
+        verify(salesDao).delete(anyInt());
     }
 
     @Test

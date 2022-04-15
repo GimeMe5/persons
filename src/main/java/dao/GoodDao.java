@@ -1,109 +1,83 @@
 package dao;
 
 import model.Good;
+import org.hibernate.Session;
 
-import java.sql.*;
-import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.persistence.Query;
 import java.util.List;
-import java.util.Optional;
+
+import static dao.SessionSource.buildSessionFactory;
 
 /**
  * @author Artyom Kulagin
  */
 public class GoodDao implements Dao<Good, Integer> {
-    private GoodDao() {
-    }
 
-    private static GoodDao instance;
+    private static Session session;
 
-    public static GoodDao getInstance() {
-        if (instance == null) {
-            instance = new GoodDao();
-        }
-        return instance;
+    public final static Logger logger = LoggerFactory.getLogger(GoodDao.class);
+
+    @Override
+    public void save(Good good) {
+        session = buildSessionFactory().openSession();
+        session.beginTransaction();
+        session.save(good);
+        session.getTransaction().commit();
+        logger.info("Good " + good.getName() + " successfully created");
     }
 
     @Override
-    public Optional<Good> find(Integer id) throws SQLException {
-        String sql = "SELECT * FROM goods WHERE id = ?";
-        int price = 0;
-        String name = "";
-        Connection connection = DataSource.getConnection();
+    public List<Good> findAll() {
+         session = buildSessionFactory().openSession();
+        session.beginTransaction();
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<Good> query = builder.createQuery(Good.class);
+//        Root<Good> root = query.from(Good.class);
+//        CriteriaQuery<Good> all = query.select(root);
+//        TypedQuery<Good> allQuery = session.createQuery(all);
+//        List<Good> goods = allQuery.getResultList();
 
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
+        List<Good> goods = session.createQuery("FROM Good",Good.class).getResultList();
 
-        if (resultSet.next()) {
-            id = resultSet.getInt("id");
-            name = resultSet.getString("name");
-            price = resultSet.getInt("price");
-        }
-        return Optional.of(new Good(id, name, price));
-    }
+        session.getTransaction().commit();
+        session.close();
 
-    @Override
-    public List<Good> findAll() throws SQLException {
-        List<Good> goods = new ArrayList<>();
-        String sql = "SELECT * FROM goods";
-
-        Connection connection = DataSource.getConnection();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
-
-        while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String name = resultSet.getString("name");
-            int price = resultSet.getInt("price");
-
-            Good good = new Good(id, name, price);
-            goods.add(good);
-        }
         return goods;
     }
 
     @Override
-    public boolean save(Good o) throws SQLException {
-        String sql = "INSERT INTO goods (name,price) VALUES (?,?)";
+    public Good findById(Integer id) {
+        session = buildSessionFactory().openSession();
+        Good good = session.get(Good.class, id);
+        session.close();
 
-        Connection connection = DataSource.getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, o.getName());
-        statement.setInt(2, o.getPrice());
-
-        return statement.executeUpdate() > 0;
+        return good;
     }
 
     @Override
-    public boolean update(Good o) throws SQLException {
-        String sql = "UPDATE goods SET name = ?, price = ? WHERE id=?";
-
-        Connection connection = DataSource.getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, o.getName());
-        statement.setInt(2, o.getPrice());
-        statement.setInt(3, o.getId());
-
-        return statement.executeUpdate() > 0;
+    public void delete(Integer id) {
+        session = buildSessionFactory().openSession();
+        Good good = findById(id);
+        session.remove(good);
+        session.close();
     }
 
     @Override
-    public boolean delete(Good o) throws SQLException {
-        String deleteFromGoods = "DELETE FROM goods WHERE id = ?";
-        String deleteFromGoodsSales = "DELETE FROM goods_sales WHERE goods_id = ? ";
-        Connection connection = DataSource.getConnection();
-        PreparedStatement goodsStatement = connection.prepareStatement(deleteFromGoods);
-        PreparedStatement goodsSalesStatement = connection.prepareStatement(deleteFromGoodsSales);
-
-        connection.setAutoCommit(false);
-        connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-        goodsStatement.setInt(1, o.getId());
-        goodsSalesStatement.setInt(1, o.getId());
-        boolean first = goodsSalesStatement.executeUpdate() > 0;
-        boolean second = goodsStatement.executeUpdate() > 0;
-        connection.commit();
-        connection.setAutoCommit(true);
-
-        return first & second;
+    public void update(Good good) {
+        try {
+            session = buildSessionFactory().openSession();
+            session.beginTransaction();
+            Good loadedGood = session.get(Good.class, good.getId());
+            loadedGood.setName(good.getName());
+            loadedGood.setPrice(good.getPrice());
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
     }
 }

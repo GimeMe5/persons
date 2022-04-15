@@ -8,13 +8,13 @@ import java.util.Optional;
  * @author Artyom Kulagin
  */
 public interface Dao<T, ID> {
-    Optional<T> find(ID id) throws SQLException;
+    T findById(ID id) throws SQLException;
 
     List<T> findAll() throws SQLException;
 
-    boolean save(T o) throws SQLException;
+    void save(T o) throws SQLException;
 
-    boolean update(T o) throws SQLException;
+    void update(T o) throws SQLException;
 
-    boolean delete(T o) throws SQLException;
+    void delete(ID id) throws SQLException;
 }
